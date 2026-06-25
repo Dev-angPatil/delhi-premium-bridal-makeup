@@ -1,0 +1,309 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" width="360" height="640">
+  <defs>
+    <!-- Background: deep crimson luxury -->
+    <radialGradient id="bg_after" cx="50%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#5a0a1e"/>
+      <stop offset="60%" stop-color="#3a0512"/>
+      <stop offset="100%" stop-color="#1a0208"/>
+    </radialGradient>
+    <!-- Skin — warmer, more luminous after makeup -->
+    <radialGradient id="skin_a" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#fde0bc"/>
+      <stop offset="60%" stop-color="#f2c090"/>
+      <stop offset="100%" stop-color="#d99868"/>
+    </radialGradient>
+    <!-- Gold gradient for jewelry -->
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff4c2"/>
+      <stop offset="25%" stop-color="#f5e4a0"/>
+      <stop offset="55%" stop-color="#d4af37"/>
+      <stop offset="80%" stop-color="#aa7c11"/>
+      <stop offset="100%" stop-color="#7c5806"/>
+    </linearGradient>
+    <!-- Gold shimmer -->
+    <linearGradient id="goldShimmer" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff9e0"/>
+      <stop offset="40%" stop-color="#d4af37"/>
+      <stop offset="100%" stop-color="#8a6010"/>
+    </linearGradient>
+    <!-- Lip red -->
+    <linearGradient id="lipRed" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c01030"/>
+      <stop offset="50%" stop-color="#8b0520"/>
+      <stop offset="100%" stop-color="#600010"/>
+    </linearGradient>
+    <!-- Hair -->
+    <linearGradient id="hair_a" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0%" stop-color="#1a0c06"/>
+      <stop offset="100%" stop-color="#0a0502"/>
+    </linearGradient>
+    <!-- Neck -->
+    <linearGradient id="neck_a" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f2c090"/>
+      <stop offset="100%" stop-color="#d89868"/>
+    </linearGradient>
+    <!-- Eye shadow gradient -->
+    <linearGradient id="eyeShadow" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#1a0508" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#6b1520" stop-opacity="0.5"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="goldGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <filter id="blur2">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="blur1">
+      <feGaussianBlur stdDeviation="1"/>
+    </filter>
+  </defs>
+
+  <!-- ═══ BACKGROUND ═══ -->
+  <rect width="360" height="640" fill="url(#bg_after)"/>
+
+  <!-- Radial gold glow behind face -->
+  <ellipse cx="180" cy="230" rx="130" ry="155" fill="#d4af37" opacity="0.06" filter="url(#softglow)"/>
+  <ellipse cx="180" cy="230" rx="90" ry="110" fill="#d4af37" opacity="0.04" filter="url(#softglow)"/>
+
+  <!-- Decorative corner flourishes -->
+  <path d="M10 10 L50 10 L50 14 L14 14 L14 50 L10 50 Z" fill="#d4af37" opacity="0.4"/>
+  <path d="M350 10 L310 10 L310 14 L346 14 L346 50 L350 50 Z" fill="#d4af37" opacity="0.4"/>
+  <path d="M10 630 L50 630 L50 626 L14 626 L14 590 L10 590 Z" fill="#d4af37" opacity="0.4"/>
+  <path d="M350 630 L310 630 L310 626 L346 626 L346 590 L350 590 Z" fill="#d4af37" opacity="0.4"/>
+
+  <!-- ═══ HAIR (back layer) ═══ -->
+  <ellipse cx="180" cy="185" rx="105" ry="118" fill="url(#hair_a)"/>
+  <!-- Bun shape at top -->
+  <ellipse cx="180" cy="80" rx="55" ry="42" fill="#1a0c06"/>
+  <ellipse cx="180" cy="80" rx="48" ry="36" fill="#221008"/>
+  <!-- Hair bun highlights -->
+  <path d="M140 72 C150 65 160 62 175 63" stroke="#3a1a08" stroke-width="2.5" fill="none" opacity="0.6"/>
+  <path d="M136 85 C148 76 162 72 178 73" stroke="#3a1a08" stroke-width="2" fill="none" opacity="0.4"/>
+  <!-- Flower on bun -->
+  <circle cx="208" cy="65" r="9" fill="#8b0520" opacity="0.9"/>
+  <circle cx="208" cy="65" r="5" fill="#d4af37"/>
+  <circle cx="208" cy="65" r="2.5" fill="#8b0520"/>
+  <!-- Flower petals -->
+  <ellipse cx="208" cy="55" rx="4" ry="7" fill="#c01030" opacity="0.85"/>
+  <ellipse cx="208" cy="75" rx="4" ry="7" fill="#c01030" opacity="0.85"/>
+  <ellipse cx="198" cy="65" rx="7" ry="4" fill="#c01030" opacity="0.85"/>
+  <ellipse cx="218" cy="65" rx="7" ry="4" fill="#c01030" opacity="0.85"/>
+  <ellipse cx="201" cy="58" rx="4" ry="7" fill="#a00020" opacity="0.7" transform="rotate(45 201 58)"/>
+  <ellipse cx="215" cy="72" rx="4" ry="7" fill="#a00020" opacity="0.7" transform="rotate(45 215 72)"/>
+  <ellipse cx="201" cy="72" rx="4" ry="7" fill="#a00020" opacity="0.7" transform="rotate(-45 201 72)"/>
+  <ellipse cx="215" cy="58" rx="4" ry="7" fill="#a00020" opacity="0.7" transform="rotate(-45 215 58)"/>
+  <!-- Second small flower -->
+  <circle cx="158" cy="72" r="7" fill="#8b0520" opacity="0.8"/>
+  <circle cx="158" cy="72" r="4" fill="#d4af37"/>
+  <circle cx="158" cy="72" r="2" fill="#8b0520"/>
+  <ellipse cx="158" cy="64" rx="3" ry="5.5" fill="#c01030" opacity="0.8"/>
+  <ellipse cx="158" cy="80" rx="3" ry="5.5" fill="#c01030" opacity="0.8"/>
+  <ellipse cx="150" cy="72" rx="5.5" ry="3" fill="#c01030" opacity="0.8"/>
+  <ellipse cx="166" cy="72" rx="5.5" ry="3" fill="#c01030" opacity="0.8"/>
+
+  <!-- ═══ MAANG TIKKA (forehead jewelry) ═══ -->
+  <!-- Chain from hair parting -->
+  <path d="M180 100 L180 148" stroke="url(#gold)" stroke-width="1.5" stroke-dasharray="3,2.5"/>
+  <!-- Tikka pendant -->
+  <ellipse cx="180" cy="152" rx="10" ry="12" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <ellipse cx="180" cy="152" rx="7" ry="9" fill="#8b0520"/>
+  <ellipse cx="180" cy="152" rx="4" ry="5" fill="url(#gold)"/>
+  <circle cx="180" cy="152" r="2" fill="#fff4c2"/>
+  <!-- Small stones around tikka -->
+  <circle cx="170" cy="152" r="2" fill="url(#gold)"/>
+  <circle cx="190" cy="152" r="2" fill="url(#gold)"/>
+  <circle cx="175" cy="143" r="1.5" fill="url(#gold)"/>
+  <circle cx="185" cy="143" r="1.5" fill="url(#gold)"/>
+
+  <!-- ═══ NECK ═══ -->
+  <rect x="155" y="340" width="50" height="68" rx="11" fill="url(#neck_a)"/>
+  <line x1="169" y1="342" x2="169" y2="404" stroke="#c49060" stroke-width="1" opacity="0.35"/>
+  <line x1="191" y1="342" x2="191" y2="404" stroke="#c49060" stroke-width="1" opacity="0.35"/>
+
+  <!-- ═══ NECKLACE (Kundan / Polki style) ═══ -->
+  <!-- Necklace base chain -->
+  <path d="M115 368 C120 352 140 342 155 340 L205 340 C220 342 240 352 245 368" stroke="url(#gold)" stroke-width="3" fill="none" filter="url(#goldGlow)"/>
+  <!-- Main necklace stones row 1 -->
+  <ellipse cx="180" cy="360" rx="14" ry="9" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <ellipse cx="180" cy="360" rx="10" ry="6" fill="#8b0520"/>
+  <ellipse cx="180" cy="360" rx="6" ry="3.5" fill="#fff4c2" opacity="0.9"/>
+  <ellipse cx="159" cy="362" rx="10" ry="7" fill="url(#gold)"/>
+  <ellipse cx="159" cy="362" rx="7" ry="4.5" fill="#8b0520"/>
+  <ellipse cx="159" cy="362" rx="4" ry="2.5" fill="#fff4c2" opacity="0.9"/>
+  <ellipse cx="201" cy="362" rx="10" ry="7" fill="url(#gold)"/>
+  <ellipse cx="201" cy="362" rx="7" ry="4.5" fill="#8b0520"/>
+  <ellipse cx="201" cy="362" rx="4" ry="2.5" fill="#fff4c2" opacity="0.9"/>
+  <ellipse cx="138" cy="367" rx="8" ry="6" fill="url(#gold)"/>
+  <ellipse cx="138" cy="367" rx="5" ry="3.5" fill="#8b0520"/>
+  <ellipse cx="222" cy="367" rx="8" ry="6" fill="url(#gold)"/>
+  <ellipse cx="222" cy="367" rx="5" ry="3.5" fill="#8b0520"/>
+  <!-- Necklace row 2 (hanging drops) -->
+  <path d="M148 370 L144 385" stroke="url(#gold)" stroke-width="1"/>
+  <ellipse cx="144" cy="389" rx="5" ry="7" fill="url(#gold)"/>
+  <path d="M165 370 L163 385" stroke="url(#gold)" stroke-width="1"/>
+  <ellipse cx="163" cy="389" rx="5" ry="7" fill="#8b0520" stroke="url(#gold)" stroke-width="1"/>
+  <path d="M180 371 L180 386" stroke="url(#gold)" stroke-width="1"/>
+  <ellipse cx="180" cy="391" rx="6" ry="9" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <ellipse cx="180" cy="391" rx="3.5" ry="5.5" fill="#fff4c2" opacity="0.8"/>
+  <path d="M195 370 L197 385" stroke="url(#gold)" stroke-width="1"/>
+  <ellipse cx="197" cy="389" rx="5" ry="7" fill="#8b0520" stroke="url(#gold)" stroke-width="1"/>
+  <path d="M212 370 L216 385" stroke="url(#gold)" stroke-width="1"/>
+  <ellipse cx="216" cy="389" rx="5" ry="7" fill="url(#gold)"/>
+
+  <!-- ═══ EARRINGS (Chandelier style) ═══ -->
+  <!-- Left earring -->
+  <path d="M96 220 L94 238 L90 256 L86 268" stroke="url(#gold)" stroke-width="1.5" fill="none"/>
+  <ellipse cx="96" cy="218" rx="5" ry="6" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <ellipse cx="96" cy="218" rx="3" ry="4" fill="#8b0520"/>
+  <ellipse cx="94" cy="238" rx="5" ry="5" fill="url(#gold)"/>
+  <ellipse cx="90" cy="256" rx="5" ry="6" fill="url(#gold)"/>
+  <ellipse cx="90" cy="256" rx="3" ry="4" fill="#8b0520"/>
+  <ellipse cx="86" cy="270" rx="4" ry="8" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <!-- Right earring -->
+  <path d="M264 220 L266 238 L270 256 L274 268" stroke="url(#gold)" stroke-width="1.5" fill="none"/>
+  <ellipse cx="264" cy="218" rx="5" ry="6" fill="url(#gold)" filter="url(#goldGlow)"/>
+  <ellipse cx="264" cy="218" rx="3" ry="4" fill="#8b0520"/>
+  <ellipse cx="266" cy="238" rx="5" ry="5" fill="url(#gold)"/>
+  <ellipse cx="270" cy="256" rx="5" ry="6" fill="url(#gold)"/>
+  <ellipse cx="270" cy="256" rx="3" ry="4" fill="#8b0520"/>
+  <ellipse cx="274" cy="270" rx="4" ry="8" fill="url(#gold)" filter="url(#goldGlow)"/>
+
+  <!-- ═══ SHOULDERS & LEHENGA BLOUSE ═══ -->
+  <path d="M30 425 C30 398 95 374 155 368 L205 368 C265 374 330 398 330 425 L345 640 L15 640 Z" fill="#6a0a1e"/>
+  <!-- Blouse embroidery border -->
+  <path d="M30 425 C70 408 130 398 155 395 C165 402 180 404 205 395 C230 398 290 408 330 425" stroke="#d4af37" stroke-width="2" fill="none" opacity="0.7"/>
+  <path d="M30 435 C70 418 130 408 155 405 C165 412 180 414 205 405 C230 408 290 418 330 435" stroke="#d4af37" stroke-width="1" fill="none" opacity="0.4"/>
+  <!-- Gold embroidery dots on blouse -->
+  <circle cx="100" cy="445" r="2.5" fill="#d4af37" opacity="0.6"/>
+  <circle cx="120" cy="438" r="2" fill="#d4af37" opacity="0.5"/>
+  <circle cx="260" cy="445" r="2.5" fill="#d4af37" opacity="0.6"/>
+  <circle cx="240" cy="438" r="2" fill="#d4af37" opacity="0.5"/>
+
+  <!-- ═══ FACE ═══ -->
+  <ellipse cx="180" cy="228" rx="93" ry="108" fill="url(#skin_a)"/>
+  <!-- Jaw -->
+  <path d="M110 268 C108 308 132 345 180 354 C228 345 252 308 250 268" fill="url(#skin_a)"/>
+
+  <!-- Foundation highlight (center of face) -->
+  <ellipse cx="180" cy="220" rx="45" ry="55" fill="white" opacity="0.04"/>
+
+  <!-- ═══ FRONT HAIR (over face edges) ═══ -->
+  <path d="M90 198 C82 178 84 152 94 130 C106 104 128 82 160 68" stroke="#1a0c06" stroke-width="28" fill="none" stroke-linecap="round" filter="url(#blur1)"/>
+  <path d="M270 198 C278 178 276 152 266 130 C254 104 232 82 200 68" stroke="#1a0c06" stroke-width="28" fill="none" stroke-linecap="round" filter="url(#blur1)"/>
+
+  <!-- ═══ EYE SHADOW (bridal smoky) ═══ -->
+  <!-- Left eye shadow -->
+  <ellipse cx="137" cy="207" rx="28" ry="14" fill="#3d0a12" opacity="0.7" filter="url(#blur2)"/>
+  <path d="M112 205 C118 196 128 192 137 192 C146 192 156 196 162 205" fill="#200508" opacity="0.55"/>
+  <!-- Right eye shadow -->
+  <ellipse cx="223" cy="207" rx="28" ry="14" fill="#3d0a12" opacity="0.7" filter="url(#blur2)"/>
+  <path d="M198 205 C204 196 214 192 223 192 C232 192 242 196 248 205" fill="#200508" opacity="0.55"/>
+
+  <!-- Kajal / Kohl smudge under eyes -->
+  <path d="M114 220 C122 226 130 228 137 228 C144 228 152 226 160 220" stroke="#1a0508" stroke-width="3" fill="none" opacity="0.55" stroke-linecap="round"/>
+  <path d="M200 220 C208 226 216 228 223 228 C230 228 238 226 246 220" stroke="#1a0508" stroke-width="3" fill="none" opacity="0.55" stroke-linecap="round"/>
+
+  <!-- ═══ EYEBROWS (bold, defined, arched) ═══ -->
+  <!-- Left brow -->
+  <path d="M112 183 C122 173 136 170 152 174" stroke="#1a0508" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M113 183 C123 174 137 171 152 175" stroke="#3d1808" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Right brow -->
+  <path d="M208 174 C224 170 238 173 248 183" stroke="#1a0508" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M208 175 C223 171 237 174 247 183" stroke="#3d1808" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+  <!-- ═══ LEFT EYE ═══ -->
+  <!-- Whites -->
+  <ellipse cx="137" cy="212" rx="21" ry="11" fill="#faf8f5"/>
+  <!-- Iris -->
+  <circle cx="137" cy="212" r="10" fill="#4a2810"/>
+  <circle cx="137" cy="212" r="7" fill="#220e05"/>
+  <!-- Pupil -->
+  <circle cx="137" cy="212" r="4" fill="#050202"/>
+  <!-- Catchlights -->
+  <circle cx="141" cy="208" r="3" fill="white"/>
+  <circle cx="134" cy="215" r="1.2" fill="white" opacity="0.7"/>
+  <!-- Gold kajal inner corner -->
+  <circle cx="116" cy="212" r="3" fill="#d4af37" opacity="0.6"/>
+  <!-- Bold upper liner + wing -->
+  <path d="M114 212 C120 206 129 203 137 203 C145 203 154 206 160 211" stroke="#0a0204" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Wing -->
+  <path d="M160 211 L168 204" stroke="#0a0204" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Dramatic lashes -->
+  <line x1="120" y1="204" x2="117" y2="196" stroke="#050202" stroke-width="1.5"/>
+  <line x1="127" y1="202" x2="125" y2="193" stroke="#050202" stroke-width="1.5"/>
+  <line x1="134" y1="201" x2="133" y2="192" stroke="#050202" stroke-width="1.5"/>
+  <line x1="141" y1="201" x2="141" y2="192" stroke="#050202" stroke-width="1.5"/>
+  <line x1="148" y1="202" x2="150" y2="194" stroke="#050202" stroke-width="1.5"/>
+  <line x1="155" y1="204" x2="159" y2="197" stroke="#050202" stroke-width="1.5"/>
+  <line x1="161" y1="208" x2="166" y2="202" stroke="#050202" stroke-width="1.5"/>
+
+  <!-- ═══ RIGHT EYE ═══ -->
+  <ellipse cx="223" cy="212" rx="21" ry="11" fill="#faf8f5"/>
+  <circle cx="223" cy="212" r="10" fill="#4a2810"/>
+  <circle cx="223" cy="212" r="7" fill="#220e05"/>
+  <circle cx="223" cy="212" r="4" fill="#050202"/>
+  <circle cx="227" cy="208" r="3" fill="white"/>
+  <circle cx="220" cy="215" r="1.2" fill="white" opacity="0.7"/>
+  <circle cx="244" cy="212" r="3" fill="#d4af37" opacity="0.6"/>
+  <path d="M200 211 C206 206 215 203 223 203 C231 203 240 206 246 212" stroke="#0a0204" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M200 211 L192 204" stroke="#0a0204" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="240" y1="204" x2="243" y2="196" stroke="#050202" stroke-width="1.5"/>
+  <line x1="233" y1="202" x2="235" y2="193" stroke="#050202" stroke-width="1.5"/>
+  <line x1="226" y1="201" x2="227" y2="192" stroke="#050202" stroke-width="1.5"/>
+  <line x1="219" y1="201" x2="219" y2="192" stroke="#050202" stroke-width="1.5"/>
+  <line x1="212" y1="202" x2="210" y2="194" stroke="#050202" stroke-width="1.5"/>
+  <line x1="205" y1="204" x2="201" y2="197" stroke="#050202" stroke-width="1.5"/>
+  <line x1="199" y1="208" x2="194" y2="202" stroke="#050202" stroke-width="1.5"/>
+
+  <!-- ═══ NOSE ═══ -->
+  <path d="M175 222 C173 238 170 252 168 264 C173 270 177 272 180 272 C183 272 187 270 192 264 C190 252 187 238 185 222" fill="none" stroke="#c09060" stroke-width="1" opacity="0.4"/>
+  <ellipse cx="170" cy="266" rx="7" ry="4" fill="#c09060" opacity="0.2"/>
+  <ellipse cx="190" cy="266" rx="7" ry="4" fill="#c09060" opacity="0.2"/>
+
+  <!-- ═══ BINDI ═══ -->
+  <circle cx="180" cy="170" r="7" fill="#8b0520"/>
+  <circle cx="180" cy="170" r="5" fill="#c01030"/>
+  <circle cx="180" cy="170" r="2.5" fill="#fff4c2" opacity="0.7"/>
+  <!-- Gold ring around bindi -->
+  <circle cx="180" cy="170" r="8" fill="none" stroke="url(#gold)" stroke-width="1.5" opacity="0.8"/>
+
+  <!-- ═══ LIPS (bold bridal red) ═══ -->
+  <!-- Upper lip -->
+  <path d="M148 300 C156 292 166 288 172 290 C176 292 178 294 180 293 C182 294 184 292 188 290 C194 288 204 292 212 300 C204 296 195 295 180 295 C165 295 156 296 148 300 Z" fill="url(#lipRed)"/>
+  <!-- Cupid's bow peak highlight -->
+  <path d="M172 290 C176 287 184 287 188 290" stroke="#e01030" stroke-width="1" fill="none" opacity="0.5"/>
+  <!-- Lower lip -->
+  <path d="M148 300 C153 315 163 322 180 323 C197 322 207 315 212 300 Z" fill="url(#lipRed)"/>
+  <!-- Lip highlight -->
+  <ellipse cx="180" cy="314" rx="16" ry="5" fill="white" opacity="0.1"/>
+  <!-- Upper lip highlight (cupid's bow) -->
+  <path d="M168 293 C172 290 175 289 180 289 C185 289 188 290 192 293" stroke="white" stroke-width="0.8" fill="none" opacity="0.3"/>
+
+  <!-- ═══ BLUSH ═══ -->
+  <ellipse cx="112" cy="258" rx="32" ry="16" fill="#d04060" opacity="0.13" filter="url(#blur2)"/>
+  <ellipse cx="248" cy="258" rx="32" ry="16" fill="#d04060" opacity="0.13" filter="url(#blur2)"/>
+
+  <!-- ═══ HIGHLIGHTER (cheekbones) ═══ -->
+  <ellipse cx="122" cy="245" rx="20" ry="8" fill="#fff4c2" opacity="0.09" filter="url(#blur2)"/>
+  <ellipse cx="238" cy="245" rx="20" ry="8" fill="#fff4c2" opacity="0.09" filter="url(#blur2)"/>
+
+  <!-- ═══ CONTOURING (sides of nose, jawline) ═══ -->
+  <path d="M172 228 C170 240 170 252 170 264" stroke="#c09060" stroke-width="2" fill="none" opacity="0.18"/>
+  <path d="M188 228 C190 240 190 252 190 264" stroke="#c09060" stroke-width="2" fill="none" opacity="0.18"/>
+
+  <!-- AFTER label -->
+  <rect x="12" y="12" width="72" height="26" rx="5" fill="rgba(212,175,55,0.25)" stroke="rgba(212,175,55,0.5)" stroke-width="1"/>
+  <text x="48" y="29" text-anchor="middle" fill="#f5e4b7" font-family="Montserrat, Arial, sans-serif" font-size="9.5" letter-spacing="2.5" font-weight="600">AFTER</text>
+
+  <!-- "With Jewelry" label at bottom -->
+  <rect x="55" y="598" width="250" height="28" rx="6" fill="rgba(212,175,55,0.15)" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
+  <text x="180" y="617" text-anchor="middle" fill="#f5e4b7" font-family="Montserrat, Arial, sans-serif" font-size="9" letter-spacing="2" opacity="0.95">BRIDAL MAKEUP · JEWELRY</text>
+</svg>

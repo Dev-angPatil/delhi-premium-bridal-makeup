@@ -527,9 +527,37 @@ html, body {
   border: 1px solid rgba(212, 175, 55, 0.25);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
   user-select: none;
-  /* 'none' is set on drag start via JS; default allows vertical scroll */
   touch-action: pan-y;
   cursor: ew-resize;
+}
+
+/* Corner labels: AFTER (bottom-left) and BEFORE (bottom-right) */
+.slider-corner-label {
+  position: absolute;
+  bottom: 14px;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 4px;
+  z-index: 8;
+  pointer-events: none;
+}
+
+.label-after {
+  left: 10px;
+  background: rgba(212, 175, 55, 0.2);
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  color: #f5e4b7;
+}
+
+.label-before {
+  right: 10px;
+  background: rgba(60, 30, 10, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #e0d0c0;
 }
 
 .slider-image {

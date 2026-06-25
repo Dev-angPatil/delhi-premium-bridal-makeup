@@ -288,13 +288,15 @@ const sliderHandle = document.getElementById('slider-handle');
 const sliderContainer = document.querySelector('.before-after-slider');
 const dragButton = document.querySelector('.handle-button');
 
-// Inline SVG placeholders
-const beforeSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><rect width="320" height="568" fill="%23dfd0c0"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f3dcd0" stroke="%23b08b75" stroke-width="1.5"/><path d="M125 185 c10 -8 20 -8 25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M195 185 c-10 -8 -20 -8 -25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M148 252 c6 2 18 2 24 0" fill="none" stroke="%23cc9688" stroke-width="2" stroke-linecap="round"/></svg>`;
+// Load real SVG files:
+// - image-before (LEFT overlay) = AFTER look (bridal transformation)
+// - image-after  (RIGHT bg)     = BEFORE look (natural canvas)
+beforeImg.src = '/after.svg';
+afterImg.src  = '/before.svg';
 
-const afterSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%25" stop-color="%23f5e4b7"/><stop offset="50%25" stop-color="%23d4af37"/><stop offset="100%25" stop-color="%23aa7c11"/></linearGradient><radialGradient id="glow" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" stop-color="%23d4af37" stop-opacity="0.3"/><stop offset="100%25" stop-color="%23d4af37" stop-opacity="0"/></radialGradient></defs><rect width="320" height="568" fill="%2350101d"/><circle cx="160" cy="240" r="120" fill="url(%23glow)"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f8e2d6" stroke="%23905c48" stroke-width="1"/><path d="M146 252 c6 -4 10 -2 14 -2 s8 -2 14 2 c3 4 -6 6 -14 6 s-17 -2 -14 -6 z" fill="%23b0122a" stroke="%23600510" stroke-width="1"/><circle cx="160" cy="172" r="4" fill="%23b0122a" stroke="url(%23gold)" stroke-width="1"/><path d="M110 300 c15 25 35 35 50 35 s35 -10 50 -35" fill="none" stroke="url(%23gold)" stroke-width="4"/></svg>`;
-
-beforeImg.src = beforeSVG;
-afterImg.src = afterSVG;
+// Update alt text to match corrected sides
+beforeImg.alt = 'After — Bridal Transformation';
+afterImg.alt  = 'Before — Natural Look';
 
 let isDragging = false;
 
