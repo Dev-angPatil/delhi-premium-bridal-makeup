@@ -50,7 +50,7 @@ function resizeSlider() {
 // Generate image file path
 const getFramePath = (index) => {
   const frameNum = (index + 1).toString().padStart(4, '0');
-  return `/sequence/frame_${frameNum}.webp`;
+  return `${import.meta.env.BASE_URL}sequence/frame_${frameNum}.webp`;
 };
 
 /* ==========================================================================
@@ -257,8 +257,8 @@ const dragButton = document.querySelector('.handle-button');
 // Load AI-generated portrait images:
 // - image-before (LEFT overlay) = AFTER look (full bridal, same model)
 // - image-after  (RIGHT bg)     = BEFORE look (natural, same model)
-beforeImg.src = '/after.webp';
-afterImg.src  = '/before.webp';
+beforeImg.src = `${import.meta.env.BASE_URL}after.webp`;
+afterImg.src  = `${import.meta.env.BASE_URL}before.webp`;
 
 // Update alt text
 beforeImg.alt = 'After — Full Bridal Transformation';
