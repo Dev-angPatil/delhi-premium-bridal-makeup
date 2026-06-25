@@ -470,8 +470,8 @@ function initAnimations() {
     scrollTrigger: {
       trigger: '#scroll-container',
       start: 'top top',
-      end: '65% bottom',
-      scrub: 0.15,  // Lower scrub = more responsive / snappier
+      end: '30% bottom',   // All 240 frames play in first 30% of scroll
+      scrub: 0.08,          // Very tight scrub — frames track finger almost 1:1
       onUpdate: () => renderFrame()
     }
   });
