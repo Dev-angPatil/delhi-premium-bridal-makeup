@@ -793,6 +793,8 @@ html, body {
   /* Ensure the form box doesn't bleed on narrow phones */
   box-sizing: border-box;
   position: relative;
+  top: auto;
+  left: auto;
   opacity: 1;
   transform: none;
 }
