@@ -241,41 +241,7 @@ audioToggle.addEventListener('click', () => {
   }
 });
 
-/* ==========================================================================
-   🎨 THEME SWAP ENGINE (CINEMATIC BACKDROP)
-   ========================================================================== */
-
-const glowBackdrop = document.getElementById('ambient-glow');
-const swatches = document.querySelectorAll('.swatch');
-
-const themeGlows = {
-  royal: 'radial-gradient(circle, rgba(139, 28, 46, 0.45) 0%, rgba(0,0,0,0) 70%)',
-  pastel: 'radial-gradient(circle, rgba(226, 192, 180, 0.35) 0%, rgba(0,0,0,0) 70%)',
-  shehnai: 'radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(0,0,0,0) 70%)'
-};
-
-const themeAccents = {
-  royal: '#8b1c2e',
-  pastel: '#e2c0b4',
-  shehnai: '#d4af37'
-};
-
-swatches.forEach(swatch => {
-  swatch.addEventListener('click', () => {
-    swatches.forEach(s => {
-      s.classList.remove('active');
-      s.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-    });
-
-    const themeName = swatch.getAttribute('data-theme');
-    swatch.classList.add('active');
-    swatch.style.borderColor = 'var(--color-gold)';
-
-    glowBackdrop.style.background = themeGlows[themeName];
-    document.documentElement.style.setProperty('--color-gold', themeAccents[themeName]);
-    document.documentElement.style.setProperty('--color-glow-royal', themeGlows[themeName]);
-  });
-});
+/* (Theme swap removed — glow theme picker UI was removed) */
 
 /* ==========================================================================
    ↔️ BEFORE / AFTER SLIDER HANDLERS — Mobile-first touch handling
@@ -288,14 +254,14 @@ const sliderHandle = document.getElementById('slider-handle');
 const sliderContainer = document.querySelector('.before-after-slider');
 const dragButton = document.querySelector('.handle-button');
 
-// Load real SVG files:
-// - image-before (LEFT overlay) = AFTER look (bridal transformation)
-// - image-after  (RIGHT bg)     = BEFORE look (natural canvas)
-beforeImg.src = '/after.svg';
-afterImg.src  = '/before.svg';
+// Load AI-generated portrait images:
+// - image-before (LEFT overlay) = AFTER look (full bridal, same model)
+// - image-after  (RIGHT bg)     = BEFORE look (natural, same model)
+beforeImg.src = '/after.webp';
+afterImg.src  = '/before.webp';
 
-// Update alt text to match corrected sides
-beforeImg.alt = 'After — Bridal Transformation';
+// Update alt text
+beforeImg.alt = 'After — Full Bridal Transformation';
 afterImg.alt  = 'Before — Natural Look';
 
 let isDragging = false;

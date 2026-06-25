@@ -790,8 +790,10 @@ html, body {
 .booking-box {
   width: 100%;
   max-width: 360px;
+  /* Ensure the form box doesn't bleed on narrow phones */
+  box-sizing: border-box;
   position: relative;
-  opacity: 1; /* Retains visible bounds on lower pages */
+  opacity: 1;
   transform: none;
 }
 
@@ -816,15 +818,23 @@ html, body {
 .form-group input, 
 .form-group select, 
 .form-group textarea {
+  /* Must be 100% to not overflow on narrow phones */
+  width: 100%;
+  box-sizing: border-box;
   background: rgba(9, 7, 8, 0.75);
   border: 1px solid rgba(212, 175, 55, 0.2);
-  border-radius: 8px;
-  padding: 10px 12px;
+  border-radius: 10px;
+  /* 44px minimum tap target height */
+  padding: 12px 14px;
+  min-height: 44px;
   color: var(--color-text-light);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   transition: var(--transition-fast);
   outline: none;
+  /* Reset iOS default select/input styles */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-group input:focus, 
