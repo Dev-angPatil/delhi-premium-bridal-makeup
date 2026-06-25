@@ -39,7 +39,9 @@
 
 html, body {
   width: 100%;
-  height: 100%;
+  /* Use dvh (dynamic viewport height) to handle mobile browser chrome correctly.
+     Falls back to 100% for older browsers. */
+  min-height: 100dvh;
   overflow-x: hidden;
   background-color: var(--color-bg);
   color: var(--color-text-light);
@@ -47,6 +49,8 @@ html, body {
   font-size: 15px;
   line-height: 1.6;
   scroll-behavior: auto; /* Managed by GSAP */
+  /* Prevent text size adjustment on orientation change */
+  -webkit-text-size-adjust: 100%;
 }
 
 /* Smooth custom scrollbar */
@@ -132,8 +136,9 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  /* dvh so loader fills the actual visible area on mobile */
+  height: 100dvh;
   background-color: var(--color-bg);
   z-index: 9999;
   display: flex;
@@ -191,18 +196,20 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  /* dvh ensures canvas fills real visible screen on mobile */
+  height: 100dvh;
   z-index: 1;
   overflow: hidden;
   background-color: var(--color-bg);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   will-change: opacity;
 }
 
 #scrolly-canvas {
+  /* Size is set dynamically by JS (resizeCanvas) */
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   display: block;
@@ -228,28 +235,33 @@ html, body {
 
 #audio-toggle {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  /* Safe area inset for notched phones */
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  right: 20px;
+  /* Min 44px tap target per mobile guidelines */
   width: 48px;
   height: 48px;
   border-radius: 50%;
   border: 1px solid rgba(212, 175, 55, 0.3);
-  background: rgba(9, 7, 8, 0.7);
+  background: rgba(9, 7, 8, 0.85);
   color: var(--color-gold-light);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(212,175,55,0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   transition: var(--transition-fast);
+  /* Prevent double-tap zoom on iOS */
+  touch-action: manipulation;
 }
 
 #audio-toggle:active {
-  transform: scale(0.9);
+  transform: scale(0.88);
   border-color: var(--color-gold);
+  background: rgba(30, 20, 10, 0.95);
 }
 
 .audio-icon.hidden {
@@ -320,21 +332,26 @@ html, body {
   position: relative;
   width: 100%;
   z-index: 2;
-  pointer-events: none;
+  /* pointer-events must be auto so touch/scroll works on mobile.
+     Individual non-interactive layers handle their own pointer-events. */
+  pointer-events: auto;
 }
 
 .scroll-section {
   position: relative;
-  width: 100vw;
-  height: 140vh;
+  width: 100%;
+  /* Use svh (small viewport height) for cinematic sections so they
+     don't overflow past the visible area when browser chrome is shown */
+  height: 140svh;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 16px;
 }
 
 #scene-hero, #scene-cta {
-  height: 100vh;
+  /* svh = small viewport height (excludes mobile browser chrome) */
+  height: 100svh;
 }
 
 .content-box {
@@ -344,16 +361,19 @@ html, body {
   background: var(--color-card-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.18);
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  padding: 2.2rem 1.8rem;
+    0 15px 35px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  /* Comfortable padding on mobile */
+  padding: 1.8rem 1.4rem;
   border-radius: 20px;
   text-align: center;
-  position: sticky;
+  /* Centering is done by GSAP (xPercent: -50, yPercent: -50) after init.
+     left: 50% anchors the element's left edge to center; GSAP shifts it. */
+  position: absolute;
   top: 50%;
-  transform: translateY(-50%);
+  left: 50%;
   opacity: 0;
   will-change: transform, opacity;
 }
@@ -507,7 +527,9 @@ html, body {
   border: 1px solid rgba(212, 175, 55, 0.25);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
   user-select: none;
-  touch-action: pan-y; /* Prevent touch events from vertical scrolling during drag */
+  /* 'none' is set on drag start via JS; default allows vertical scroll */
+  touch-action: pan-y;
+  cursor: ew-resize;
 }
 
 .slider-image {
@@ -562,24 +584,26 @@ html, body {
 }
 
 .handle-button {
-  width: 38px;
-  height: 38px;
+  /* 44px minimum tap target for accessibility */
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--color-bg);
-  border: 1px solid var(--color-gold);
+  border: 1.5px solid var(--color-gold);
   color: var(--color-gold-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 4px var(--color-gold);
-  pointer-events: auto; /* Enable dragging handle button */
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.9), 0 0 6px var(--color-gold);
+  pointer-events: auto;
   cursor: grab;
+  touch-action: manipulation;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .handle-button:active {
   cursor: grabbing;
-  transform: scale(0.9);
+  transform: scale(0.88);
   background: var(--color-gold-deep);
 }
 
@@ -590,14 +614,19 @@ html, body {
 .packages-tabs {
   display: flex;
   justify-content: center;
+  /* Wrap tabs on very small screens */
+  flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 2.2rem;
   width: 100%;
   max-width: 360px;
+  padding: 0 4px;
 }
 
 .tab-btn {
-  padding: 6px 14px;
+  /* 44px min height for tap target */
+  padding: 10px 16px;
+  min-height: 44px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(212, 175, 55, 0.2);
   color: var(--color-gold-light);
@@ -609,6 +638,7 @@ html, body {
   cursor: pointer;
   transition: var(--transition-fast);
   outline: none;
+  touch-action: manipulation;
 }
 
 .tab-btn.active {
@@ -863,23 +893,26 @@ html, body {
   background: linear-gradient(135deg, var(--color-gold-dark) 0%, var(--color-gold) 50%, var(--color-gold-deep) 100%);
   border: 1px solid var(--color-gold-light);
   border-radius: 30px;
-  padding: 0.9rem 1.8rem;
+  /* Comfortable touch target */
+  padding: 1rem 1.8rem;
+  min-height: 48px;
   color: var(--color-bg);
   text-decoration: none;
-  font-weight: 500;
-  font-size: 0.8rem;
+  font-weight: 600;
+  font-size: 0.82rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   box-shadow: 
-    0 4px 15px rgba(212, 175, 55, 0.3),
+    0 4px 15px rgba(212, 175, 55, 0.35),
     0 8px 30px rgba(0, 0, 0, 0.4);
   transition: var(--transition-fast);
   cursor: pointer;
   outline: none;
+  touch-action: manipulation;
 }
 
 .gold-btn:active {
-  transform: scale(0.96);
+  transform: scale(0.94);
   box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
 }
 
@@ -908,17 +941,20 @@ html, body {
   width: 100%;
   background: transparent;
   border: none;
+  /* Min 44px tap target */
   padding: 1rem 1.2rem;
+  min-height: 44px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   text-align: left;
   color: var(--color-text-light);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 400;
   cursor: pointer;
   outline: none;
+  touch-action: manipulation;
 }
 
 .faq-icon {
@@ -1042,12 +1078,77 @@ html, body {
   
   .content-box {
     opacity: 1 !important;
-    transform: translateY(-50%) !important;
+    /* When animations are disabled, manually centre via CSS */
+    transform: translate(-50%, -50%) !important;
     transition: none !important;
   }
 
   .faq-panel {
     max-height: none !important;
     padding: 0 1.2rem 1rem !important;
+  }
+}
+
+/* ==========================================================================
+   📱 MOBILE SAFE-AREA PADDING (Notched/Pill phones)
+   ========================================================================== */
+
+.luxury-footer {
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
+}
+
+/* Ensure content sections don't bleed under notched nav bars */
+.content-section {
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
+}
+
+/* Very small phone screens (< 360px wide) */
+@media (max-width: 359px) {
+  .brand-title {
+    font-size: 1.8rem;
+    letter-spacing: 0.12em;
+  }
+
+  .brand-title-gold {
+    font-size: 2.2rem;
+  }
+
+  .content-box {
+    padding: 1.4rem 1.1rem;
+  }
+
+  .packages-tabs {
+    gap: 6px;
+  }
+
+  .tab-btn {
+    font-size: 0.65rem;
+    padding: 8px 10px;
+  }
+}
+
+/* Landscape phone orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .scroll-section {
+    /* Shorter cinematic sections in landscape so content is visible */
+    height: 200svh;
+  }
+
+  #scene-hero, #scene-cta {
+    height: 150svh;
+  }
+
+  .content-box {
+    padding: 1.2rem 1.4rem;
+    max-width: 420px;
+  }
+
+  .brand-title-gold {
+    font-size: 2rem;
+  }
+
+  .section-title-gold {
+    font-size: 1.5rem;
   }
 }

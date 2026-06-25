@@ -14,11 +14,28 @@ const ctx = canvas.getContext('2d');
 const totalFrames = 240;
 const images = [];
 
-// Setup Canvas Resolution (Retina-ready) and Slider bounds
+// Use a CSS custom property trick to get the real visible height on mobile
+// (avoids the "100vh includes hidden browser chrome" iOS bug)
+function getViewportHeight() {
+  return window.visualViewport ? window.visualViewport.height : window.innerHeight;
+}
+function getViewportWidth() {
+  return window.visualViewport ? window.visualViewport.width : window.innerWidth;
+}
+
+// Setup Canvas Resolution (Retina-ready)
 function resizeCanvas() {
-  const pixelRatio = Math.min(window.devicePixelRatio, 2);
-  canvas.width = window.innerWidth * pixelRatio;
-  canvas.height = window.innerHeight * pixelRatio;
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  const vw = getViewportWidth();
+  const vh = getViewportHeight();
+
+  canvas.width = vw * pixelRatio;
+  canvas.height = vh * pixelRatio;
+
+  // Also update CSS size so canvas fills the container
+  canvas.style.width = vw + 'px';
+  canvas.style.height = vh + 'px';
+
   renderFrame();
   resizeSlider();
 }
@@ -84,38 +101,30 @@ function onPreloadComplete(resolve) {
 }
 
 /* ==========================================================================
-   🖌️ CANVAS COVER RENDERING (CSS Object-Fit: Cover for Canvas)
+   🖌️ CANVAS COVER RENDERING — Fixed "object-fit: cover" for Canvas
+   The bug was using Math.min (which produces CONTAIN, causing black bars).
+   Cover requires Math.MAX so the image fills the full canvas, cropping edges.
    ========================================================================== */
 
 function drawImageCover(ctx, img) {
-  const w = canvas.width;
-  const h = canvas.height;
-  const iw = img.width;
-  const ih = img.height;
-  
-  const r = Math.min(w / iw, h / ih);
-  let nw = iw * r;
-  let nh = ih * r;
-  let ar = 1;
+  const cw = canvas.width;
+  const ch = canvas.height;
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
 
-  if (nw < w) ar = w / nw;
-  if (Math.abs(nh - h) < 0.001) ar = h / nh;
-  nw *= ar;
-  nh *= ar;
+  if (!iw || !ih) return;
 
-  let cw = iw / (nw / w);
-  let ch = ih / (nh / h);
+  // Scale factor: use MAX so image covers entire canvas (may crop)
+  const scale = Math.max(cw / iw, ch / ih);
+  const nw = iw * scale;
+  const nh = ih * scale;
 
-  let cx = (iw - cw) * 0.5;
-  let cy = (ih - ch) * 0.5;
+  // Center the image
+  const dx = (cw - nw) / 2;
+  const dy = (ch - nh) / 2;
 
-  if (cx < 0) cx = 0;
-  if (cy < 0) cy = 0;
-  if (cw > iw) cw = iw;
-  if (ch > ih) ch = ih;
-
-  ctx.clearRect(0, 0, w, h);
-  ctx.drawImage(img, cx, cy, cw, ch, 0, 0, w, h);
+  ctx.clearRect(0, 0, cw, ch);
+  ctx.drawImage(img, dx, dy, nw, nh);
 }
 
 const playhead = { frame: 0 };
@@ -123,7 +132,7 @@ const playhead = { frame: 0 };
 function renderFrame() {
   const activeIndex = Math.min(Math.max(Math.round(playhead.frame), 0), totalFrames - 1);
   const activeImg = images[activeIndex];
-  if (activeImg && activeImg.complete) {
+  if (activeImg && activeImg.complete && activeImg.naturalWidth > 0) {
     drawImageCover(ctx, activeImg);
   }
 }
@@ -154,11 +163,11 @@ function initSynth() {
 
   const baseFreq = 69.30; // C#2
   const frequencies = [
-    baseFreq,          // Fundamental (C#2)
-    baseFreq * 1.5,    // Fifth (G#2)
-    baseFreq * 2,      // Octave (C#3)
-    baseFreq * 3,      // Octave + Fifth (G#3)
-    baseFreq * 4       // Second Octave (C#4)
+    baseFreq,
+    baseFreq * 1.5,
+    baseFreq * 2,
+    baseFreq * 3,
+    baseFreq * 4
   ];
 
   frequencies.forEach((freq, index) => {
@@ -205,10 +214,8 @@ function startAmbientSound() {
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();
   }
-  
   masterGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 2.5);
   isAudioPlaying = true;
-  
   iconMuted.classList.add('hidden');
   equalizer.classList.remove('hidden');
 }
@@ -218,7 +225,6 @@ function stopAmbientSound() {
     masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
   }
   isAudioPlaying = false;
-  
   iconMuted.classList.remove('hidden');
   equalizer.classList.add('hidden');
 }
@@ -262,14 +268,13 @@ swatches.forEach(swatch => {
     swatch.style.borderColor = 'var(--color-gold)';
 
     glowBackdrop.style.background = themeGlows[themeName];
-    
     document.documentElement.style.setProperty('--color-gold', themeAccents[themeName]);
     document.documentElement.style.setProperty('--color-glow-royal', themeGlows[themeName]);
   });
 });
 
 /* ==========================================================================
-   ↔️ BEFORE / AFTER SLIDER HANDLERS
+   ↔️ BEFORE / AFTER SLIDER HANDLERS — Mobile-first touch handling
    ========================================================================== */
 
 const beforeImg = document.getElementById('img-before');
@@ -279,10 +284,10 @@ const sliderHandle = document.getElementById('slider-handle');
 const sliderContainer = document.querySelector('.before-after-slider');
 const dragButton = document.querySelector('.handle-button');
 
-// Inject Inline Luxury SVGs to guarantee asset loading
-const beforeSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><rect width="320" height="568" fill="%23dfd0c0"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f3dcd0" stroke="%23b08b75" stroke-width="1.5"/><path d="M125 185 c10 -8 20 -8 25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M195 185 c-10 -8 -20 -8 -25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M128 193 c6 3 14 3 20 0" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M192 193 c-6 3 -14 3 -20 0" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M160 193 v35 c0 4 -3 6 -6 6" fill="none" stroke="%23b08b75" stroke-width="1.5" stroke-linecap="round"/><path d="M148 252 c6 2 18 2 24 0" fill="none" stroke="%23cc9688" stroke-width="2" stroke-linecap="round"/></svg>`;
+// Inline SVG placeholders
+const beforeSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><rect width="320" height="568" fill="%23dfd0c0"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f3dcd0" stroke="%23b08b75" stroke-width="1.5"/><path d="M125 185 c10 -8 20 -8 25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M195 185 c-10 -8 -20 -8 -25 -2" fill="none" stroke="%238c6c58" stroke-width="1.5" stroke-linecap="round"/><path d="M148 252 c6 2 18 2 24 0" fill="none" stroke="%23cc9688" stroke-width="2" stroke-linecap="round"/></svg>`;
 
-const afterSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%25" stop-color="%23f5e4b7"/><stop offset="50%25" stop-color="%23d4af37"/><stop offset="100%25" stop-color="%23aa7c11"/></linearGradient><radialGradient id="glow" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" stop-color="%23d4af37" stop-opacity="0.3"/><stop offset="100%25" stop-color="%23d4af37" stop-opacity="0"/></radialGradient></defs><rect width="320" height="568" fill="%2350101d"/><circle cx="160" cy="240" r="120" fill="url(%23glow)"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f8e2d6" stroke="%23905c48" stroke-width="1"/><path d="M123 192 c5 -5 18 -5 24 -1" fill="none" stroke="url(%23gold)" stroke-width="4" stroke-linecap="round"/><path d="M197 192 c-5 -5 -18 -5 -24 -1" fill="none" stroke="url(%23gold)" stroke-width="4" stroke-linecap="round"/><path d="M125 193 c6 3 14 3 20 0" fill="none" stroke="%23111" stroke-width="2.5" stroke-linecap="round"/><path d="M195 193 c-6 3 -14 3 -20 0" fill="none" stroke="%23111" stroke-width="2.5" stroke-linecap="round"/><path d="M128 194 l-4 4 M135 195 l-2 5 M142 195 l1 5 M178 195 l-1 5 M185 195 l2 5 M192 194 l4 4" fill="none" stroke="%23111" stroke-width="1.5"/><path d="M124 185 c10 -10 21 -9 26 -2" fill="none" stroke="%232a1a15" stroke-width="2.5" stroke-linecap="round"/><path d="M196 185 c-10 -10 -21 -9 -26 -2" fill="none" stroke="%232a1a15" stroke-width="2.5" stroke-linecap="round"/><path d="M160 193 v35 c0 4 -3 6 -6 6" fill="none" stroke="%23b87a60" stroke-width="1.5" stroke-linecap="round"/><path d="M146 252 c6 -4 10 -2 14 -2 s8 -2 14 2 c3 4 -6 6 -14 6 s-17 -2 -14 -6 z" fill="%23b0122a" stroke="%23600510" stroke-width="1"/><path d="M148 252 c6 2 18 2 24 0" fill="none" stroke="url(%23gold)" stroke-width="1.5" stroke-linecap="round"/><circle cx="160" cy="172" r="4" fill="%23b0122a" stroke="url(%23gold)" stroke-width="1"/><path d="M160 140 v20" fill="none" stroke="url(%23gold)" stroke-width="2"/><circle cx="160" cy="160" r="3" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="1"/><path d="M160 163 l-4 4 l4 4 l4 -4 z" fill="%23b0122a" stroke="url(%23gold)" stroke-width="1"/><path d="M110 300 c15 25 35 35 50 35 s35 -10 50 -35" fill="none" stroke="url(%23gold)" stroke-width="4"/><path d="M118 308 c15 22 30 28 42 28 s27 -6 42 -28" fill="none" stroke="url(%23gold)" stroke-width="2"/><circle cx="160" cy="337" r="3.5" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="1"/><circle cx="145" cy="331" r="2.5" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="0.8"/><circle cx="175" cy="331" r="2.5" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="0.8"/><circle cx="132" cy="322" r="2.5" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="0.8"/><circle cx="188" cy="322" r="2.5" fill="%23faf9f6" stroke="url(%23gold)" stroke-width="0.8"/></svg>`;
+const afterSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 568" width="320" height="568"><defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0%25" stop-color="%23f5e4b7"/><stop offset="50%25" stop-color="%23d4af37"/><stop offset="100%25" stop-color="%23aa7c11"/></linearGradient><radialGradient id="glow" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" stop-color="%23d4af37" stop-opacity="0.3"/><stop offset="100%25" stop-color="%23d4af37" stop-opacity="0"/></radialGradient></defs><rect width="320" height="568" fill="%2350101d"/><circle cx="160" cy="240" r="120" fill="url(%23glow)"/><path d="M160 140 c-35 0 -60 25 -60 60 c0 35 15 50 30 75 c10 18 15 35 15 50 c0 15 -10 25 -10 35 c0 20 20 30 25 30 s25 -10 25 -30 c0 -10 -10 -20 -10 -35 c0 -15 5 -32 15 -50 c15 -25 30 -40 30 -75 c0 -35 -25 -60 -60 -60 z" fill="%23f8e2d6" stroke="%23905c48" stroke-width="1"/><path d="M146 252 c6 -4 10 -2 14 -2 s8 -2 14 2 c3 4 -6 6 -14 6 s-17 -2 -14 -6 z" fill="%23b0122a" stroke="%23600510" stroke-width="1"/><circle cx="160" cy="172" r="4" fill="%23b0122a" stroke="url(%23gold)" stroke-width="1"/><path d="M110 300 c15 25 35 35 50 35 s35 -10 50 -35" fill="none" stroke="url(%23gold)" stroke-width="4"/></svg>`;
 
 beforeImg.src = beforeSVG;
 afterImg.src = afterSVG;
@@ -294,13 +299,21 @@ function updateSlider(clientX) {
   const offsetX = clientX - rect.left;
   let percent = (offsetX / rect.width) * 100;
   percent = Math.max(0, Math.min(100, percent));
-  
+
   beforeWrapper.style.width = `${percent}%`;
   sliderHandle.style.left = `${percent}%`;
 }
 
-dragButton.addEventListener('mousedown', () => { isDragging = true; });
-dragButton.addEventListener('touchstart', () => { isDragging = true; });
+// Drag start — on entire slider area for easier mobile use
+sliderContainer.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  updateSlider(e.clientX);
+});
+
+sliderContainer.addEventListener('touchstart', (e) => {
+  isDragging = true;
+  updateSlider(e.touches[0].clientX);
+}, { passive: true });
 
 window.addEventListener('mouseup', () => { isDragging = false; });
 window.addEventListener('touchend', () => { isDragging = false; });
@@ -312,10 +325,10 @@ window.addEventListener('mousemove', (e) => {
 
 window.addEventListener('touchmove', (e) => {
   if (!isDragging) return;
-  if (e.touches && e.touches[0]) {
-    updateSlider(e.touches[0].clientX);
-  }
-});
+  updateSlider(e.touches[0].clientX);
+  // Prevent page scroll while dragging slider horizontally
+  e.preventDefault();
+}, { passive: false });
 
 /* ==========================================================================
    💳 TABS SWITCHER (PACKAGES)
@@ -326,13 +339,11 @@ const packageCards = document.querySelectorAll('.package-card');
 
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    // Reset active tab button states
     tabBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
     const targetTab = btn.getAttribute('data-tab');
 
-    // Show selected card, hide others
     packageCards.forEach(card => {
       const cardId = card.getAttribute('id');
       if (cardId === `pkg-${targetTab}`) {
@@ -358,7 +369,6 @@ faqTriggers.forEach(trigger => {
     const panel = trigger.nextElementSibling;
     const isActive = parent.classList.contains('active');
 
-    // Collapse other items
     document.querySelectorAll('.faq-item').forEach(item => {
       item.classList.remove('active');
       item.querySelector('.faq-panel').style.maxHeight = null;
@@ -382,10 +392,8 @@ const closeSuccessBtn = document.getElementById('btn-close-success');
 
 bookingForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  
   let isFormValid = true;
 
-  // 1. Validate Name
   const nameInput = document.getElementById('input-name');
   const nameErr = document.getElementById('err-name');
   if (!nameInput.value.trim()) {
@@ -397,10 +405,9 @@ bookingForm.addEventListener('submit', (e) => {
     nameErr.classList.remove('visible');
   }
 
-  // 2. Validate Phone
   const phoneInput = document.getElementById('input-phone');
   const phoneErr = document.getElementById('err-phone');
-  const phoneRegex = /^\+?[0-9\s\-]{8,15}$/; // Flexible international tel format
+  const phoneRegex = /^\+?[0-9\s\-]{8,15}$/;
   if (!phoneRegex.test(phoneInput.value.trim())) {
     phoneInput.classList.add('invalid');
     phoneErr.classList.add('visible');
@@ -410,7 +417,6 @@ bookingForm.addEventListener('submit', (e) => {
     phoneErr.classList.remove('visible');
   }
 
-  // 3. Validate Future Date
   const dateInput = document.getElementById('input-date');
   const dateErr = document.getElementById('err-date');
   const selectedDate = new Date(dateInput.value);
@@ -426,7 +432,6 @@ bookingForm.addEventListener('submit', (e) => {
     dateErr.classList.remove('visible');
   }
 
-  // If valid, display the success overlay
   if (isFormValid) {
     const firstName = nameInput.value.trim().split(' ')[0];
     successNameSpan.innerText = firstName;
@@ -434,18 +439,11 @@ bookingForm.addEventListener('submit', (e) => {
   }
 });
 
-// Close success screen and reset form fields
 closeSuccessBtn.addEventListener('click', () => {
   successOverlay.classList.add('hidden');
   bookingForm.reset();
-  
-  // Clear any residual invalid indicators
-  document.querySelectorAll('#booking-form input').forEach(el => {
-    el.classList.remove('invalid');
-  });
-  document.querySelectorAll('.error-msg').forEach(el => {
-    el.classList.remove('visible');
-  });
+  document.querySelectorAll('#booking-form input').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('visible'));
 });
 
 /* ==========================================================================
@@ -453,6 +451,11 @@ closeSuccessBtn.addEventListener('click', () => {
    ========================================================================== */
 
 function initAnimations() {
+  // Set xPercent/yPercent on all content-boxes so GSAP owns centering
+  // and the CSS transform: translate(-50%, -50%) is no longer needed.
+  // This prevents GSAP from overwriting/fighting with CSS transforms.
+  gsap.set('.scroll-section .content-box', { xPercent: -50, yPercent: -50 });
+
   // 1. Scrubbing Canvas Image Frames
   gsap.to(playhead, {
     frame: totalFrames - 1,
@@ -466,7 +469,7 @@ function initAnimations() {
     }
   });
 
-  // 2. Scroll Progress Line Animation
+  // 2. Scroll Progress Line
   gsap.to('#scroll-progress-line', {
     height: '100%',
     ease: 'none',
@@ -478,12 +481,10 @@ function initAnimations() {
     }
   });
 
-  // 3. Editorial Text Overlay Transitions (Stage 1 Cinematic)
-
-  // Hero Section fades out as we scroll
+  // 3. Hero Section fades out as we scroll
   gsap.to('#scene-hero .content-box', {
     opacity: 0,
-    y: -80,
+    yPercent: -80, // animate with yPercent so centering stays correct
     ease: 'power1.inOut',
     scrollTrigger: {
       trigger: '#scene-hero',
@@ -495,10 +496,10 @@ function initAnimations() {
 
   // Brand Description rises, holds, fades out
   gsap.fromTo('#scene-brand .content-box',
-    { opacity: 0, y: 80 },
+    { opacity: 0, yPercent: -30 },
     {
       opacity: 1,
-      y: -50,
+      yPercent: -60,
       ease: 'power1.out',
       scrollTrigger: {
         trigger: '#scene-brand',
@@ -510,7 +511,7 @@ function initAnimations() {
   );
   gsap.to('#scene-brand .content-box', {
     opacity: 0,
-    y: -150,
+    yPercent: -100,
     ease: 'power1.in',
     scrollTrigger: {
       trigger: '#scene-brand',
@@ -520,12 +521,12 @@ function initAnimations() {
     }
   });
 
-  // Jewelry detailed card rises, holds, fades out
+  // Jewelry card
   gsap.fromTo('#scene-jewelry .content-box',
-    { opacity: 0, y: 80 },
+    { opacity: 0, yPercent: -30 },
     {
       opacity: 1,
-      y: -50,
+      yPercent: -60,
       ease: 'power1.out',
       scrollTrigger: {
         trigger: '#scene-jewelry',
@@ -537,7 +538,7 @@ function initAnimations() {
   );
   gsap.to('#scene-jewelry .content-box', {
     opacity: 0,
-    y: -150,
+    yPercent: -100,
     ease: 'power1.in',
     scrollTrigger: {
       trigger: '#scene-jewelry',
@@ -547,12 +548,12 @@ function initAnimations() {
     }
   });
 
-  // CTA Block slides up and finishes Stage 1
+  // CTA Block
   gsap.fromTo('#scene-cta .content-box',
-    { opacity: 0, y: 80 },
+    { opacity: 0, yPercent: -30 },
     {
       opacity: 1,
-      y: -50,
+      yPercent: -60,
       ease: 'power1.out',
       scrollTrigger: {
         trigger: '#scene-cta',
@@ -563,9 +564,9 @@ function initAnimations() {
     }
   );
 
-  // 4. Background Canvas Dimming (Fade to 12% as we scroll into utility layout Stage 2)
+  // 4. Background Canvas Dimming when entering Stage 2
   gsap.to('#canvas-container', {
-    opacity: 0.12,
+    opacity: 0.1,
     ease: 'none',
     scrollTrigger: {
       trigger: '#section-before-after',
@@ -581,22 +582,21 @@ function initAnimations() {
    ========================================================================== */
 
 async function init() {
-  // Initialize canvas and slider sizes
   resizeCanvas();
-  window.addEventListener('resize', resizeCanvas);
+
+  // Use visualViewport for resize on mobile (handles iOS chrome bar correctly)
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', resizeCanvas);
+  } else {
+    window.addEventListener('resize', resizeCanvas);
+  }
 
   // Preload all frames, then build animations
   await preloadImages();
-  
-  // Sync slider width on load
+
   resizeSlider();
-  
-  // Set initial frame
   renderFrame();
-  
-  // Setup timelines
   initAnimations();
 }
 
-// Fire up the engine when DOM is parsed
 window.addEventListener('DOMContentLoaded', init);
