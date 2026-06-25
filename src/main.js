@@ -101,12 +101,14 @@ function onPreloadComplete(resolve) {
 }
 
 /* ==========================================================================
-   🖌️ CANVAS COVER RENDERING — Fixed "object-fit: cover" for Canvas
-   The bug was using Math.min (which produces CONTAIN, causing black bars).
-   Cover requires Math.MAX so the image fills the full canvas, cropping edges.
+   🖌️ CANVAS RENDERING — "object-fit: contain" style
+   Frames are 720×1280 portrait (9:16). We use CONTAIN (Math.min) so the
+   full frame is always visible without cropping — exactly what the user
+   wants when they say "zoom out". A dark background fills any edge gaps
+   on wider screens.
    ========================================================================== */
 
-function drawImageCover(ctx, img) {
+function drawImageContain(ctx, img) {
   const cw = canvas.width;
   const ch = canvas.height;
   const iw = img.naturalWidth || img.width;
@@ -114,8 +116,8 @@ function drawImageCover(ctx, img) {
 
   if (!iw || !ih) return;
 
-  // Scale factor: use MAX so image covers entire canvas (may crop)
-  const scale = Math.max(cw / iw, ch / ih);
+  // CONTAIN: scale so the entire image fits, no cropping
+  const scale = Math.min(cw / iw, ch / ih);
   const nw = iw * scale;
   const nh = ih * scale;
 
@@ -123,7 +125,9 @@ function drawImageCover(ctx, img) {
   const dx = (cw - nw) / 2;
   const dy = (ch - nh) / 2;
 
-  ctx.clearRect(0, 0, cw, ch);
+  // Fill background first (for letterbox bars on non-portrait screens)
+  ctx.fillStyle = '#090708';
+  ctx.fillRect(0, 0, cw, ch);
   ctx.drawImage(img, dx, dy, nw, nh);
 }
 
@@ -133,7 +137,7 @@ function renderFrame() {
   const activeIndex = Math.min(Math.max(Math.round(playhead.frame), 0), totalFrames - 1);
   const activeImg = images[activeIndex];
   if (activeImg && activeImg.complete && activeImg.naturalWidth > 0) {
-    drawImageCover(ctx, activeImg);
+    drawImageContain(ctx, activeImg);
   }
 }
 
@@ -457,14 +461,17 @@ function initAnimations() {
   gsap.set('.scroll-section .content-box', { xPercent: -50, yPercent: -50 });
 
   // 1. Scrubbing Canvas Image Frames
+  // End at 65% of the scroll container so all 240 frames play
+  // through in the first ~2/3 of scroll — making the animation feel
+  // significantly faster and ensuring the full video is seen.
   gsap.to(playhead, {
     frame: totalFrames - 1,
     ease: 'none',
     scrollTrigger: {
       trigger: '#scroll-container',
       start: 'top top',
-      end: 'bottom bottom',
-      scrub: 0.25,
+      end: '65% bottom',
+      scrub: 0.15,  // Lower scrub = more responsive / snappier
       onUpdate: () => renderFrame()
     }
   });
